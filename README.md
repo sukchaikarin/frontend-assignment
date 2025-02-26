@@ -118,6 +118,6 @@ npm run dev
 ## **Demo**
 
 URL ตัวอย่าง (เมื่อ Deploy ด้วย Vercel หรือโฮสอื่นๆ):  
-[https://<project-name>.vercel.app](https://<project-name>.vercel.app)
+[https://frontend-assignment-phi-two.vercel.app/](https://frontend-assignment-phi-two.vercel.app/)
 
 ---
