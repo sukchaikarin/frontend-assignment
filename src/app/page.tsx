@@ -1,101 +1,126 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from "react";
+import { Button, Card } from "antd";
 
-export default function Home() {
+interface Item {
+  type: "Fruit" | "Vegetable";
+  name: string;
+}
+
+// ตัวอย่างข้อมูลเริ่มต้น (Main List)
+const initialData: Item[] = [
+  { type: "Fruit", name: "Apple" },
+  { type: "Vegetable", name: "Broccoli" },
+  { type: "Vegetable", name: "Mushroom" },
+  { type: "Fruit", name: "Banana" },
+  { type: "Vegetable", name: "Tomato" },
+  { type: "Fruit", name: "Orange" },
+  { type: "Fruit", name: "Mango" },
+];
+
+const Home: React.FC = () => {
+  const [mainList, setMainList] = useState<Item[]>([...initialData]); // Main List
+  const [fruitList, setFruitList] = useState<Item[]>([]); // Fruit Column
+  const [vegetableList, setVegetableList] = useState<Item[]>([]); // Vegetable Column
+  const [timeouts, setTimeouts] = useState<Map<string, NodeJS.Timeout>>(
+    new Map()
+  ); // ติดตาม Timeout
+
+  // ฟังก์ชัน Handle คลิกปุ่มจาก Main List
+  const handleMainClick = (item: Item) => {
+    // เอา Item ออกจาก Main List
+    setMainList((prev) => prev.filter((i) => i.name !== item.name));
+
+    if (item.type === "Fruit") {
+      setFruitList((prev) => [...prev, item]); // ย้ายไปที่ Fruit Column
+    } else {
+      setVegetableList((prev) => [...prev, item]); // ย้ายไปที่ Vegetable Column
+    }
+
+    // ตั้ง Timeout 5 วินาที
+    const timeoutId = setTimeout(() => {
+      // ดึงกลับไปยัง Main List
+      setMainList((prev) => [...prev, item]);
+      if (item.type === "Fruit") {
+        setFruitList((prev) => prev.filter((i) => i.name !== item.name));
+      } else {
+        setVegetableList((prev) => prev.filter((i) => i.name !== item.name));
+      }
+      timeouts.delete(item.name); // ลบ Timeout ที่ทำเสร็จแล้ว
+    }, 5000);
+
+    // บันทึก ID ของ Timeout
+    setTimeouts((prev) => new Map(prev).set(item.name, timeoutId));
+  };
+
+  // ฟังก์ชัน Handle คลิกผลไม้หรือผักใน Column
+  const handleColumnClick = (item: Item) => {
+    if (timeouts.has(item.name)) {
+      clearTimeout(timeouts.get(item.name)!); // Clear Timeout
+      setTimeouts((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(item.name);
+        return newMap;
+      });
+    }
+    if (item.type === "Fruit") {
+      setFruitList((prev) => prev.filter((i) => i.name !== item.name));
+    } else {
+      setVegetableList((prev) => prev.filter((i) => i.name !== item.name));
+    }
+    setMainList((prev) => [...prev, item]); // ย้ายกลับไปยัง Main List
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="container mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-6 text-center">
+        To Do List with Ant Design
+      </h1>
+      <div className="grid grid-cols-3 gap-6">
+        {/* Main List */}
+        <Card title="Main List" className="col-span-1">
+          {mainList.map((item) => (
+            <Button
+              key={item.name}
+              className="mb-2 w-full"
+              onClick={() => handleMainClick(item)}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </Card>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        {/* Fruit Column */}
+        <Card title="Fruits" className="col-span-1 bg-orange-50">
+          {fruitList.map((item) => (
+            <Button
+              key={item.name}
+              type="primary"
+              danger
+              className="mb-2 w-full"
+              onClick={() => handleColumnClick(item)}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </Card>
+
+        {/* Vegetable Column */}
+        <Card title="Vegetables" className="col-span-1 bg-green-50">
+          {vegetableList.map((item) => (
+            <Button
+              key={item.name}
+              type="primary"
+              className="mb-2 w-full"
+              onClick={() => handleColumnClick(item)}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </Card>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
