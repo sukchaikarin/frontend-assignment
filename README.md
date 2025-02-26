@@ -6,7 +6,7 @@
 
 - **Main List** สำหรับแสดงรายการเริ่มต้น.
 - **Fruit Column และ Vegetable Column** แบ่งประเภทของรายการ.
-- ฟังก์ชันเด่น:
+- ฟังก์ชันหลัก:
   - ย้ายรายการระหว่างคอลัมน์เมื่อมีการคลิก.
   - ส่งกลับ Main List อัตโนมัติใน **5 วินาที**.
   - ย้ายกลับ Main List ได้ทันทีเมื่อคลิกที่รายการใน Fruit หรือ Vegetable Column.
@@ -112,3 +112,12 @@ npm run dev
 ├── tsconfig.json # การตั้งค่า TypeScript
 └── README.md # ไฟล์คำอธิบายโปรเจกต์
 ```
+
+---
+
+## **Demo**
+
+URL ตัวอย่าง (เมื่อ Deploy ด้วย Vercel หรือโฮสอื่นๆ):  
+[https://<project-name>.vercel.app](https://<project-name>.vercel.app)
+
+---
