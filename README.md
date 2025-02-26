@@ -91,6 +91,7 @@ npm run dev
 
 ## **Code Structure**
 
+```bash
 .
 ├── public/ # เก็บไฟล์ Static เช่น รูปภาพหรือ favicon
 ├── src/ # โฟลเดอร์หลักสำหรับซอร์สโค้ดทั้งหมด
@@ -110,3 +111,4 @@ npm run dev
 ├── tailwind.config.ts # การตั้งค่า TailwindCSS
 ├── tsconfig.json # การตั้งค่า TypeScript
 └── README.md # ไฟล์คำอธิบายโปรเจกต์
+```
